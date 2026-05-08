@@ -1,4 +1,4 @@
-# 💻 PC Tool v4.1
+# 💻 PC Tool v1
 
 > Outil d'entretien et de maintenance Windows — tout-en-un, gratuit et open source.
 
