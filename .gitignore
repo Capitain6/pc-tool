@@ -1,0 +1,45 @@
+# ── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.spec
+.eggs/
+
+# ── Environnements virtuels ──────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ── PyInstaller ──────────────────────────────────────────
+dist/
+build/
+*.spec
+
+# ── Données utilisateur / config locale ─────────────────
+*.log
+settings.json
+historique.log
+
+# ── Output / captures ───────────────────────────────────
+Output/
+*.pdf
+capture_*.png
+rapport_pc_*.txt
+pctool_log_*.txt
+
+# ── IDE ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── OS ───────────────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
