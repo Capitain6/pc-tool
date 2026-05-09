@@ -8,6 +8,8 @@
 ![Version](https://img.shields.io/badge/Version-4.1-orange)
 
 ---
+## ⬇️ Téléchargement
+👉 [Cliquez ici pour télécharger PCTool_Setup.exe] https://drive.google.com/file/d/1j-riMxYBHOJEJP2ZwESRDUbnG_xOoMHI/view?usp=drive_link
 
 ## 📸 Aperçu
 
