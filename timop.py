@@ -43,7 +43,7 @@ if getattr(sys, 'frozen', False):
 
 VERSION     = "1.0"
 APP_NAME    = "PC Tool"
-GITHUB_REPO = "Capitain6/pc-tool"   # pour la vérification des mises à jour
+GITHUB_REPO = "Capitaine6/pc-tool"   # pour la vérification des mises à jour
 APP_DIR   = os.path.join(os.environ.get("APPDATA", ""), "PCTool")
 LOG_FILE  = os.path.join(APP_DIR, "historique.log")
 SETTINGS_FILE = os.path.join(APP_DIR, "settings.json")
