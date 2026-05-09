@@ -38,11 +38,12 @@ if getattr(sys, 'frozen', False):
     os.chdir(sys._MEIPASS)
 
 # ============================================================
-#  PC TOOL  v4.1
+#  PC TOOL  v1.0
 # ============================================================
 
-VERSION   = "4.1"
-APP_NAME  = "PC Tool"
+VERSION     = "1.0"
+APP_NAME    = "PC Tool"
+GITHUB_REPO = "Capitain6/pc-tool"   # pour la vérification des mises à jour
 APP_DIR   = os.path.join(os.environ.get("APPDATA", ""), "PCTool")
 LOG_FILE  = os.path.join(APP_DIR, "historique.log")
 SETTINGS_FILE = os.path.join(APP_DIR, "settings.json")
@@ -493,7 +494,15 @@ class App(ctk.CTk):
                       command=self._open_about,
                       fg_color=self.RAISED, hover_color=self.CARD, text_color=self.TEXT,
                       font=FONT_SMALL, corner_radius=8, height=30, width=110,
-                      border_width=1, border_color=self.BORDER).pack(side="left", padx=(0,16))
+                      border_width=1, border_color=self.BORDER).pack(side="left", padx=(0,8))
+
+        self.update_btn = ctk.CTkButton(
+            hdr_right, text="🔍  Mises à jour",
+            command=lambda: self.do_check_update(btn=self.update_btn),
+            fg_color=self.RAISED, hover_color=self.CARD, text_color=self.MUTED,
+            font=FONT_SMALL, corner_radius=8, height=30, width=130,
+            border_width=1, border_color=self.BORDER)
+        self.update_btn.pack(side="left", padx=(0,16))
 
         stats_row = ctk.CTkFrame(hdr_right, fg_color="transparent")
         stats_row.pack(side="left")
@@ -935,6 +944,33 @@ class App(ctk.CTk):
                  activebackground="#2196f3", showvalue=False,
                  sliderlength=20, bd=0, width=14).pack(fill="x", padx=8, pady=(0,12))
 
+        # ══ SECTION MISES À JOUR
+        section("🔄  Mises à jour")
+        upd_f = tk.Frame(inner, bg="#1e1e1e")
+        upd_f.pack(fill="x", padx=16, pady=4)
+        tk.Label(upd_f,
+                 text=f"Version actuelle : v{VERSION}   —   Repo : github.com/{GITHUB_REPO}",
+                 bg="#1e1e1e", fg="#888888", font=("Arial",10)).pack(anchor="w", padx=8, pady=(8,6))
+
+        upd_state = {"btn": None}
+        def do_upd_check():
+            b = upd_state["btn"]
+            if b: b.configure(text="🔄  Vérification…", state="disabled")
+            class BtnProxy:
+                def configure(self_, **kw):
+                    if b is None: return
+                    if "text"  in kw: b.configure(text=kw["text"])
+                    if "state" in kw: b.configure(state=kw["state"])
+            self.do_check_update(btn=BtnProxy())
+
+        upd_btn = tk.Button(upd_f, text="🔍  Vérifier les mises à jour",
+                            command=do_upd_check,
+                            bg="#1565c0", fg="white", font=("Arial",11,"bold"),
+                            relief="flat", bd=0, padx=14, pady=8,
+                            activebackground="#2196f3", cursor="hand2")
+        upd_btn.pack(anchor="w", padx=8, pady=(0,12))
+        upd_state["btn"] = upd_btn
+
         tk.Frame(inner, bg="#111111", height=20).pack()
 
     def _open_about(self):
@@ -1000,6 +1036,114 @@ class App(ctk.CTk):
                 time.sleep(30)
         self._sched_thread = threading.Thread(target=sched_loop, daemon=True)
         self._sched_thread.start()
+
+    # ════════════════════════════════════════════════════════
+    # VÉRIFICATION DES MISES À JOUR
+    # ════════════════════════════════════════════════════════
+    def do_check_update(self, btn=None):
+        """Vérifie si une nouvelle version est disponible sur GitHub."""
+        if btn:
+            btn.configure(text="🔄  Vérification…", state="disabled")
+
+        def t():
+            try:
+                url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+                req = urllib.request.Request(url, headers={"User-Agent": "PCTool"})
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    data = json.loads(resp.read().decode())
+
+                latest_tag  = data.get("tag_name", "").lstrip("v")
+                release_url = data.get("html_url", f"https://github.com/{GITHUB_REPO}/releases")
+                release_name = data.get("name", f"v{latest_tag}")
+
+                # Comparaison de version (ex: "1.0" vs "1.1")
+                def ver_tuple(v):
+                    try: return tuple(int(x) for x in v.split("."))
+                    except Exception: return (0,)
+
+                current = ver_tuple(VERSION)
+                latest  = ver_tuple(latest_tag)
+
+                def update_ui():
+                    if btn:
+                        btn.configure(text="🔍  Vérifier les mises à jour", state="normal")
+                    if latest > current:
+                        # Nouvelle version disponible → popup
+                        self._show_update_popup(latest_tag, release_name, release_url)
+                    elif latest == current:
+                        messagebox.showinfo(
+                            "✅  PC Tool est à jour",
+                            f"Vous utilisez déjà la dernière version : v{VERSION}",
+                            parent=self)
+                    else:
+                        messagebox.showinfo(
+                            "ℹ️  Version locale",
+                            f"Version locale (v{VERSION}) plus récente que la release (v{latest_tag}).",
+                            parent=self)
+
+                self.after(0, update_ui)
+
+            except urllib.error.URLError:
+                def no_net():
+                    if btn: btn.configure(text="🔍  Vérifier les mises à jour", state="normal")
+                    messagebox.showerror(
+                        "Erreur réseau",
+                        "Impossible de contacter GitHub.\nVérifiez votre connexion internet.",
+                        parent=self)
+                self.after(0, no_net)
+            except Exception as e:
+                def err():
+                    if btn: btn.configure(text="🔍  Vérifier les mises à jour", state="normal")
+                    messagebox.showerror("Erreur", str(e), parent=self)
+                self.after(0, err)
+
+        threading.Thread(target=t, daemon=True).start()
+
+    def _show_update_popup(self, latest_tag, release_name, release_url):
+        """Popup élégant quand une mise à jour est disponible."""
+        popup = ctk.CTkToplevel(self)
+        popup.title("Mise à jour disponible")
+        popup.geometry("440x280")
+        popup.configure(fg_color=self.BG)
+        popup.resizable(False, False)
+        popup.grab_set()
+        popup.lift()
+        popup.after(100, popup.focus_force)
+
+        # Centrer
+        popup.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width()  - 440) // 2
+        y = self.winfo_y() + (self.winfo_height() - 280) // 2
+        popup.geometry(f"440x280+{x}+{y}")
+
+        # Bordure colorée en haut
+        ctk.CTkFrame(popup, height=4, fg_color=GREEN, corner_radius=0).pack(fill="x")
+
+        ctk.CTkLabel(popup, text="🎉", font=("Arial", 42)).pack(pady=(18, 4))
+        ctk.CTkLabel(popup, text="Nouvelle version disponible !",
+                     font=("Arial", 16, "bold"), text_color=GREEN).pack()
+        ctk.CTkLabel(popup, text=f"v{VERSION}  →  v{latest_tag}   ({release_name})",
+                     font=FONT_SMALL, text_color=self.MUTED).pack(pady=(4, 16))
+
+        ctk.CTkFrame(popup, height=1, fg_color=self.BORDER).pack(fill="x", padx=30)
+
+        btn_row = ctk.CTkFrame(popup, fg_color="transparent")
+        btn_row.pack(pady=20)
+
+        def open_release():
+            import webbrowser
+            webbrowser.open(release_url)
+            popup.destroy()
+
+        ctk.CTkButton(btn_row, text="⬇️  Télécharger la mise à jour",
+                      command=open_release,
+                      fg_color=GREEN2, hover_color=GREEN, text_color=self.TEXT,
+                      font=FONT_BODY, corner_radius=10, height=42, width=220).pack(side="left", padx=(0,10))
+        ctk.CTkButton(btn_row, text="Plus tard",
+                      command=popup.destroy,
+                      fg_color=self.RAISED, hover_color=self.CARD, text_color=self.MUTED,
+                      font=FONT_SMALL, corner_radius=10, height=42, width=100,
+                      border_width=1, border_color=self.BORDER).pack(side="left")
 
     # ════════════════════════════════════════════════════════
     # PAGE  DASHBOARD
