@@ -9,7 +9,7 @@
 
 ---
 ## ⬇️ Téléchargement
-👉 [Cliquez ici pour télécharger PCTool_Setup.exe] https://drive.google.com/file/d/1j-riMxYBHOJEJP2ZwESRDUbnG_xOoMHI/view?usp=drive_link
+👉 [Cliquez ici pour télécharger PCTool_Setup.exe]
 
 ## 📸 Aperçu
 
