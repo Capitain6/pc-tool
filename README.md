@@ -5,13 +5,26 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey?logo=windows)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Version](https://img.shields.io/badge/Version-4.1-orange)
+![Version](https://img.shields.io/badge/Version-1.0-orange)
 
 ---
-## ⬇️ Téléchargement
-👉 [Cliquez ici pour télécharger PCTool_Setup.exe](https://www.mediafire.com/file/wmmhedncdy7nthv/PCTool_Setup.exe/file)
 
-## 📸 Aperçu
+## ⬇️ Téléchargement
+
+👉 **[Cliquez ici pour télécharger PCTool_Setup.exe](https://www.mediafire.com/file/tst8cs81be3qnk9/PCTool_Setup.exe/file)**
+
+> ⚠️ Windows peut afficher "application inconnue" car l'exe n'est pas signé.  
+> Cliquez sur **"Informations complémentaires" → "Exécuter quand même"**
+
+---
+
+## ☕ Soutenir le projet
+
+Si PC Tool vous est utile, vous pouvez soutenir le développement :
+
+👉 **[Ko-fi — Offrir un café](https://ko-fi.com/pctool)**
+
+---
 
 PC Tool est une application de bureau Windows développée en Python avec CustomTkinter.  
 Elle regroupe en un seul endroit tous les outils dont vous avez besoin pour entretenir, surveiller et réparer votre PC.
