@@ -606,6 +606,14 @@ class App(ctk.CTk):
                       font=("Arial",12,"bold"), corner_radius=8, height=44).pack(
                           fill="x", padx=8, pady=(0,8))
 
+        # ── Bouton Ko-fi ☕
+        ctk.CTkFrame(self.sidebar, height=1, fg_color=self.BORDER).pack(fill="x", pady=(0,8))
+        ctk.CTkButton(self.sidebar, text="☕  Soutenir le projet",
+                      command=self._open_kofi,
+                      fg_color="#FF5E5B", hover_color="#e04f4c", text_color="white",
+                      font=("Arial",11,"bold"), corner_radius=8, height=38).pack(
+                          fill="x", padx=8, pady=(0,12))
+
         # ── Raccourcis clavier
         self.bind("<Control-s>", lambda e: self._save_log())
         self.bind("<Control-r>", lambda e: self._refresh_proc_table() if self._current == "Moniteur" else None)
@@ -625,6 +633,12 @@ class App(ctk.CTk):
                         widget.destroy()
             except Exception:
                 pass
+
+    def _open_kofi(self):
+        """Ouvre la page Ko-fi dans le navigateur."""
+        import webbrowser
+        webbrowser.open("https://ko-fi.com/pctool")
+        self._log("☕  Page de soutien ouverte — merci !")
 
     # ── NAVIGATION
     def _show(self, name):
